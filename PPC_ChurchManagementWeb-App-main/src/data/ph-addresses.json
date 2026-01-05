@@ -1,0 +1,30 @@
+{
+  "provinces": [
+    {
+      "name": "Laguna",
+      "cities": [
+        {
+          "name": "San Pablo City",
+          "barangays": ["Barangay I-A", "Barangay II-B", "Barangay III-C"]
+        },
+        {
+          "name": "Calamba City",
+          "barangays": ["Barangay Parian", "Barangay Real", "Barangay Halang"]
+        }
+      ]
+    },
+    {
+      "name": "Metro Manila",
+      "cities": [
+        {
+          "name": "Quezon City",
+          "barangays": ["Bagong Pag-asa", "Commonwealth", "Batasan Hills"]
+        },
+        {
+          "name": "Manila",
+          "barangays": ["Ermita", "Malate", "Binondo"]
+        }
+      ]
+    }
+  ]
+}
