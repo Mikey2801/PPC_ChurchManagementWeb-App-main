@@ -6,7 +6,7 @@ export const users = [
     id: 1,
     name: 'John Doe',
     email: 'john.doe@example.com',
-    role: 'Admin',
+    role: 'Administrative Pastor',
     status: 'Active',
     lastLogin: '2023-05-15T14:30:00',
     joinDate: '2022-01-15',

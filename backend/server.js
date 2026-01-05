@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import massScheduleRoutes from "./routes/massSchedule.js";
 import attendanceRoutes from "./routes/attendance.js";
+import ministryRoutes from "./routes/ministries.js";
+import ministryApplicationRoutes from "./routes/ministryApplications.js";
 
 // Load environment variables
 dotenv.config();
@@ -38,6 +40,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/mass-schedules", massScheduleRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/ministries", ministryRoutes);
+app.use("/api/ministry-applications", ministryApplicationRoutes);
 
 // Error handling middleware (must be last)
 app.use((err, req, res, next) => {

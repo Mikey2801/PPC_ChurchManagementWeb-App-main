@@ -37,6 +37,9 @@ const MainLayout = () => {
 
   const handleLogout = () => {
     logout();
+    if (isMobile) {
+      setMobileOpen(false);
+    }
     navigate('/login');
   };
 

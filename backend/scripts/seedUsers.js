@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Seed initial users: Admin, Treasurer, and Secretary
+ * Seed initial users: Administrative Pastor, Treasurer, and Secretary
  */
 const seedUsers = async () => {
   try {
@@ -17,9 +17,9 @@ const seedUsers = async () => {
       {
         email: "admin@church.local",
         password: "admin123",
-        role: "Admin",
+        role: "Administrative Pastor",
         firstName: "Super",
-        lastName: "Admin",
+        lastName: "Pastor",
         birthDate: "1980-01-01",
         gender: "M",
         contactNumber: "09123456789",
@@ -140,7 +140,7 @@ const seedUsers = async () => {
     console.log("Users seeded successfully!");
     console.log("========================================\n");
     console.log("Seeded users:");
-    console.log("  - admin@church.local / admin123 / Admin");
+    console.log("  - admin@church.local / admin123 / Administrative Pastor");
     console.log("  - treasurer@church.local / treasurer123 / Treasurer");
     console.log("  - secretary@church.local / secretary123 / Secretary\n");
 

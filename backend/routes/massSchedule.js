@@ -115,7 +115,7 @@ router.get('/:id', async (req, res) => {
  * Create a new mass schedule (Secretary or Admin only)
  * Body: { date, time, title, pastor, description }
  */
-router.post('/', authenticate, requireRole(['Secretary', 'Admin']), async (req, res) => {
+router.post('/', authenticate, requireRole(['Secretary', 'Administrative Pastor']), async (req, res) => {
   try {
     const { date, time, title, pastor, description } = req.body;
     const createdBy = req.user.user_id;
@@ -183,7 +183,7 @@ router.post('/', authenticate, requireRole(['Secretary', 'Admin']), async (req, 
  * Update a mass schedule (Secretary or Admin only)
  * Body: { date, time, title, pastor, description }
  */
-router.put('/:id', authenticate, requireRole(['Secretary', 'Admin']), async (req, res) => {
+router.put('/:id', authenticate, requireRole(['Secretary', 'Administrative Pastor']), async (req, res) => {
   try {
     const { id } = req.params;
     const { date, time, title, pastor, description } = req.body;
@@ -246,7 +246,7 @@ router.put('/:id', authenticate, requireRole(['Secretary', 'Admin']), async (req
  * DELETE /api/mass-schedules/:id
  * Delete a mass schedule (Secretary or Admin only)
  */
-router.delete('/:id', authenticate, requireRole(['Secretary', 'Admin']), async (req, res) => {
+router.delete('/:id', authenticate, requireRole(['Secretary', 'Administrative Pastor']), async (req, res) => {
   try {
     const { id } = req.params;
     

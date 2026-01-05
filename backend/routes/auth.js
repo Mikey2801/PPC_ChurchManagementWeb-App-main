@@ -1,8 +1,9 @@
-import express from 'express';
-import { query, getClient } from '../config/database.js';
-import { hashPassword, comparePassword } from '../utils/password.js';
-import { generateToken } from '../utils/jwt.js';
-import { authenticate } from '../middleware/auth.js';
+import express from "express";
+import { query, getClient } from "../config/database.js";
+import { hashPassword, comparePassword } from "../utils/password.js";
+import { generateToken } from "../utils/jwt.js";
+import { authenticate } from "../middleware/auth.js";
+import { requireRole } from "../middleware/roles.js";
 
 const router = express.Router();
 
@@ -11,9 +12,9 @@ const router = express.Router();
  * Register a new user
  * Body: { email, password, lastName, firstName, middleName, birthDate, gender, province, city, barangay, street, phone }
  */
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   const client = await getClient();
-  
+
   try {
     // Extract and validate input data
     const {
@@ -28,14 +29,22 @@ router.post('/register', async (req, res) => {
       city,
       barangay,
       street,
-      phone
+      phone,
     } = req.body;
 
     // Validate required fields
-    if (!email || !password || !lastName || !firstName || !birthDate || !gender) {
+    if (
+      !email ||
+      !password ||
+      !lastName ||
+      !firstName ||
+      !birthDate ||
+      !gender
+    ) {
       return res.status(400).json({
         success: false,
-        message: 'Missing required fields: email, password, lastName, firstName, birthDate, and gender are required',
+        message:
+          "Missing required fields: email, password, lastName, firstName, birthDate, and gender are required",
       });
     }
 
@@ -44,7 +53,7 @@ router.post('/register', async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid email format',
+        message: "Invalid email format",
       });
     }
 
@@ -52,25 +61,25 @@ router.post('/register', async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters long',
+        message: "Password must be at least 6 characters long",
       });
     }
 
     // Start transaction
-    await client.query('BEGIN');
+    await client.query("BEGIN");
 
     try {
       // Check if email already exists
       const emailCheck = await client.query(
-        'SELECT user_id FROM user_account WHERE email_address = $1',
+        "SELECT user_id FROM user_account WHERE email_address = $1",
         [email]
       );
 
       if (emailCheck.rows.length > 0) {
-        await client.query('ROLLBACK');
+        await client.query("ROLLBACK");
         return res.status(409).json({
           success: false,
-          message: 'Email address already registered',
+          message: "Email address already registered",
         });
       }
 
@@ -80,7 +89,7 @@ router.post('/register', async (req, res) => {
       if (barangay) addressParts.push(barangay);
       if (city) addressParts.push(city);
       if (province) addressParts.push(province);
-      const fullAddress = addressParts.join(', ');
+      const fullAddress = addressParts.join(", ");
 
       // Hash password
       const passwordHash = await hashPassword(password);
@@ -112,18 +121,18 @@ router.post('/register', async (req, res) => {
         `INSERT INTO user_account (member_id, email_address, password_hash, role, is_active)
          VALUES ($1, $2, $3, $4, $5)
          RETURNING user_id`,
-        [memberId, email, passwordHash, 'Member', true]
+        [memberId, email, passwordHash, "Member", true]
       );
 
       const userId = userResult.rows[0].user_id;
 
       // Commit transaction
-      await client.query('COMMIT');
+      await client.query("COMMIT");
 
       // Return success response (don't send password or sensitive data)
       return res.status(201).json({
         success: true,
-        message: 'User registered successfully',
+        message: "User registered successfully",
         data: {
           user_id: userId,
           email: email,
@@ -131,27 +140,27 @@ router.post('/register', async (req, res) => {
       });
     } catch (error) {
       // Rollback transaction on error
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
       throw error;
     } finally {
       client.release();
     }
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
 
     // Handle specific database errors
-    if (error.code === '23505') {
+    if (error.code === "23505") {
       // Unique constraint violation
       return res.status(409).json({
         success: false,
-        message: 'Email address already registered',
+        message: "Email address already registered",
       });
     }
 
     return res.status(500).json({
       success: false,
-      message: 'Registration failed. Please try again later.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      message: "Registration failed. Please try again later.",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 });
@@ -161,7 +170,7 @@ router.post('/register', async (req, res) => {
  * Login user and return JWT token
  * Body: { email, password }
  */
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -169,7 +178,7 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email and password are required',
+        message: "Email and password are required",
       });
     }
 
@@ -186,7 +195,7 @@ router.post('/login', async (req, res) => {
     if (userResult.rows.length === 0) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password',
+        message: "Invalid email or password",
       });
     }
 
@@ -196,7 +205,7 @@ router.post('/login', async (req, res) => {
     if (!user.is_active) {
       return res.status(403).json({
         success: false,
-        message: 'Account is inactive. Please contact administrator.',
+        message: "Account is inactive. Please contact administrator.",
       });
     }
 
@@ -206,7 +215,7 @@ router.post('/login', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password',
+        message: "Invalid email or password",
       });
     }
 
@@ -226,7 +235,7 @@ router.post('/login', async (req, res) => {
     // Return token and user info
     return res.json({
       success: true,
-      message: 'Login successful',
+      message: "Login successful",
       data: {
         token: token,
         user: {
@@ -240,11 +249,11 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     return res.status(500).json({
       success: false,
-      message: 'Login failed. Please try again later.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      message: "Login failed. Please try again later.",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 });
@@ -254,7 +263,7 @@ router.post('/login', async (req, res) => {
  * Get current authenticated user info
  * Requires: Authentication middleware
  */
-router.get('/me', authenticate, async (req, res) => {
+router.get("/me", authenticate, async (req, res) => {
   try {
     const userId = req.user.user_id;
 
@@ -272,7 +281,7 @@ router.get('/me', authenticate, async (req, res) => {
     if (userResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'User not found',
+        message: "User not found",
       });
     }
 
@@ -297,14 +306,53 @@ router.get('/me', authenticate, async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get user info error:', error);
+    console.error("Get user info error:", error);
     return res.status(500).json({
       success: false,
-      message: 'Failed to retrieve user information',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      message: "Failed to retrieve user information",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 });
 
-export default router;
+/**
+ * GET /api/auth/users
+ * Get list of users for dropdowns (Administrative Pastor only)
+ * Returns user_id, email, and name for selection
+ */
+router.get(
+  "/users",
+  authenticate,
+  requireRole(["Administrative Pastor"]),
+  async (req, res) => {
+    try {
+      const result = await query(
+        `SELECT 
+        ua.user_id,
+        ua.member_id,
+        ua.email_address,
+        CONCAT(m.first_name, ' ', m.last_name) as name,
+        ua.role
+       FROM user_account ua
+       LEFT JOIN member m ON ua.member_id = m.member_id
+       WHERE ua.is_active = TRUE
+       ORDER BY m.first_name, m.last_name`
+      );
 
+      return res.json({
+        success: true,
+        data: result.rows,
+      });
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to fetch users",
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
+      });
+    }
+  }
+);
+
+export default router;

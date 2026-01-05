@@ -7,6 +7,7 @@ import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
 
 const Layout = () => {
@@ -14,6 +15,7 @@ const Layout = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const menuItems = [
     { text: 'Dashboard', icon: <HomeIcon />, path: '/dashboard' },
@@ -34,7 +36,10 @@ const Layout = () => {
   };
 
   const handleLogout = () => {
-    // Add logout logic here
+    logout();
+    if (isMobile) {
+      setMobileOpen(false);
+    }
     navigate('/login');
   };
 
@@ -100,6 +105,8 @@ const Layout = () => {
       <AppBar 
         position="fixed" 
         sx={{ 
+          width: { sm: 'calc(100% - 240px)' },
+          ml: { sm: '240px' },
           zIndex: theme.zIndex.drawer + 1,
           bgcolor: 'white',
           boxShadow: 'none',

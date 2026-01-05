@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -18,6 +19,7 @@ import {
 import api from "../../utils/api";
 
 export default function SecretaryDashboard() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [stats, setStats] = useState({
@@ -187,9 +189,7 @@ export default function SecretaryDashboard() {
                   transition: "all 0.2s",
                 },
               }}
-              onClick={() =>
-                (window.location.href = "/secretary/schedule-mass")
-              }
+              onClick={() => navigate("/secretary/schedule-mass")}
             >
               <Box display="flex" alignItems="center" gap={2}>
                 <EventIcon color="primary" />
@@ -209,7 +209,7 @@ export default function SecretaryDashboard() {
                   transition: "all 0.2s",
                 },
               }}
-              onClick={() => (window.location.href = "/secretary/verify-attendance")}
+              onClick={() => navigate("/secretary/verify-attendance")}
             >
               <Box display="flex" alignItems="center" gap={2}>
                 <CheckCircleIcon color="success" />
@@ -222,4 +222,3 @@ export default function SecretaryDashboard() {
     </Box>
   );
 }
-

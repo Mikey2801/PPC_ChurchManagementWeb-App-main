@@ -40,10 +40,78 @@ const createTables = async () => {
         role VARCHAR(30) NOT NULL DEFAULT 'Member',
         is_active BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP DEFAULT NOW(),
-        CONSTRAINT check_role CHECK (role IN ('Admin', 'Treasurer', 'Secretary', 'Member'))
+        CONSTRAINT check_role CHECK (role IN ('Administrative Pastor', 'Treasurer', 'Secretary', 'Member'))
       )
     `);
     console.log("✓ User_account table created (with role column)");
+
+    // Create ministry table
+    console.log("Creating ministry table...");
+    await query(`
+      CREATE TABLE IF NOT EXISTS ministry (
+        ministry_id BIGSERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        leader_id BIGINT REFERENCES user_account(user_id) ON DELETE SET NULL,
+        status VARCHAR(20) DEFAULT 'Active',
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP,
+        CONSTRAINT check_status CHECK (status IN ('Active', 'Inactive'))
+      )
+    `);
+    console.log("✓ Ministry table created");
+
+    // Create ministry_application table
+    console.log("Creating ministry_application table...");
+    await query(`
+      CREATE TABLE IF NOT EXISTS ministry_application (
+        application_id BIGSERIAL PRIMARY KEY,
+        member_id BIGINT NOT NULL REFERENCES member(member_id) ON DELETE CASCADE,
+        ministry_id BIGINT NOT NULL REFERENCES ministry(ministry_id) ON DELETE CASCADE,
+        status VARCHAR(20) DEFAULT 'Pending',
+        reason TEXT NOT NULL,
+        experience TEXT,
+        applied_at TIMESTAMP DEFAULT NOW(),
+        reviewed_by BIGINT REFERENCES user_account(user_id) ON DELETE SET NULL,
+        reviewed_at TIMESTAMP,
+        rejection_reason TEXT,
+        CONSTRAINT check_application_status CHECK (status IN ('Pending', 'Approved', 'Rejected', 'Request Info')),
+        CONSTRAINT unique_member_ministry UNIQUE (member_id, ministry_id)
+      )
+    `);
+    console.log("✓ Ministry_application table created");
+
+    // Create ministry_member table (junction table for roster)
+    console.log("Creating ministry_member table...");
+    await query(`
+      CREATE TABLE IF NOT EXISTS ministry_member (
+        ministry_member_id BIGSERIAL PRIMARY KEY,
+        ministry_id BIGINT NOT NULL REFERENCES ministry(ministry_id) ON DELETE CASCADE,
+        member_id BIGINT NOT NULL REFERENCES member(member_id) ON DELETE CASCADE,
+        joined_at TIMESTAMP DEFAULT NOW(),
+        CONSTRAINT unique_ministry_member UNIQUE (ministry_id, member_id)
+      )
+    `);
+    console.log("✓ Ministry_member table created");
+
+    // Create indexes for better query performance
+    console.log("Creating indexes...");
+    await query(
+      `CREATE INDEX IF NOT EXISTS idx_ministry_application_member ON ministry_application(member_id)`
+    );
+    await query(
+      `CREATE INDEX IF NOT EXISTS idx_ministry_application_ministry ON ministry_application(ministry_id)`
+    );
+    await query(
+      `CREATE INDEX IF NOT EXISTS idx_ministry_application_status ON ministry_application(status)`
+    );
+    await query(
+      `CREATE INDEX IF NOT EXISTS idx_ministry_member_ministry ON ministry_member(ministry_id)`
+    );
+    await query(
+      `CREATE INDEX IF NOT EXISTS idx_ministry_member_member ON ministry_member(member_id)`
+    );
+    console.log("✓ Indexes created");
 
     console.log("\n========================================");
     console.log("All tables created successfully!");

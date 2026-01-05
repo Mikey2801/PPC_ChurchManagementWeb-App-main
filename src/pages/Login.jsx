@@ -52,7 +52,7 @@ const LoginScreen = () => {
         setUser(user);
 
         // Redirect based on user role
-        if (user.role === 'Admin') {
+        if (user.role === 'Administrative Pastor') {
           navigate('/admin/dashboard');
         } else if (user.role === 'Secretary') {
           navigate('/secretary');

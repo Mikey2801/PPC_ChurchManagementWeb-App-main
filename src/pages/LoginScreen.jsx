@@ -92,7 +92,7 @@ const LoginScreen = () => {
               sx={{ bgcolor: 'background.paper' }}
               >
                 <MenuItem value="Member">Member</MenuItem>
-                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="Administrative Pastor">Administrative Pastor</MenuItem>
             </TextField>
 
             <TextField

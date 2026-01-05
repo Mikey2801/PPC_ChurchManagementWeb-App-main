@@ -225,7 +225,7 @@ router.post('/', authenticate, async (req, res) => {
  * Verify an attendance record (Secretary or Admin only)
  * Body: { status } - 'Verified' or 'Absent'
  */
-router.post('/verify/:id', authenticate, requireRole(['Secretary', 'Admin']), async (req, res) => {
+router.post('/verify/:id', authenticate, requireRole(['Secretary', 'Administrative Pastor']), async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -280,7 +280,7 @@ router.post('/verify/:id', authenticate, requireRole(['Secretary', 'Admin']), as
  * Get attendance statistics (Secretary or Admin only)
  * Query params: startDate, endDate
  */
-router.get('/stats/overview', authenticate, requireRole(['Secretary', 'Admin']), async (req, res) => {
+router.get('/stats/overview', authenticate, requireRole(['Secretary', 'Administrative Pastor']), async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
