@@ -40,7 +40,7 @@ const createTables = async () => {
         role VARCHAR(30) NOT NULL DEFAULT 'Member',
         is_active BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP DEFAULT NOW(),
-        CONSTRAINT check_role CHECK (role IN ('Admin', 'Treasurer', 'Member'))
+        CONSTRAINT check_role CHECK (role IN ('Admin', 'Treasurer', 'Secretary', 'Member'))
       )
     `);
     console.log("✓ User_account table created (with role column)");

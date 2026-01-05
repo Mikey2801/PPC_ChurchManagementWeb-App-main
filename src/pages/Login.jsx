@@ -54,6 +54,8 @@ const LoginScreen = () => {
         // Redirect based on user role
         if (user.role === 'Admin') {
           navigate('/admin/dashboard');
+        } else if (user.role === 'Secretary') {
+          navigate('/secretary');
         } else {
           navigate('/dashboard');
         }

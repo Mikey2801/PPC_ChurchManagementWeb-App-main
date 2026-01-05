@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "server": "node backend/server.js",
     "dev:all": "concurrently \"npm run server\" \"npm run dev\" --names \"BACKEND,FRONTEND\" --prefix name --prefix-colors \"blue,green\"",
-    "migrate": "node backend/scripts/createTables.js"
+    "migrate": "node backend/scripts/createTables.js",
+    "migrate:secretary": "node backend/scripts/addSecretaryRole.js",
+    "migrate:mass-schedule": "node backend/scripts/createMassScheduleTable.js",
+    "migrate:attendance": "node backend/scripts/createAttendanceTable.js",
+    "seed:users": "node backend/scripts/seedUsers.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -56,6 +60,6 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
-    "vite": "^6.4.1"
+    "vite": "^7.3.0"
   }
 }

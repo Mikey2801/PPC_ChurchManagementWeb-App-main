@@ -30,6 +30,10 @@ import BaptismalScheduling from './pages/BaptismalScheduling';
 import AdminDashboard from './pages/admin/dashboard/index.jsx';
 import AdminUsers from './pages/admin/users/index.jsx';
 import AdminMinistries from './pages/admin/ministries/index.jsx';
+import SecretaryLayout from './components/secretary/SecretaryLayout.jsx';
+import SecretaryDashboard from './pages/secretary/SecretaryDashboard.jsx';
+import ScheduleMass from './pages/secretary/ScheduleMass.jsx';
+import VerifyAttendance from './pages/secretary/VerifyAttendance.jsx';
 
 // Wrapper for public pages
 export const PublicPageWrapper = ({ children }) => (
@@ -77,6 +81,28 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+const SecretaryRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Check if user has Secretary or Admin role
+  const hasSecretaryRole = user.role === 'Secretary' || user.role === 'Admin';
+  
+  if (!hasSecretaryRole) {
+    // User doesn't have secretary role, redirect to dashboard
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
@@ -86,8 +112,13 @@ const PublicRoute = ({ children }) => {
 
   if (user) {
     // User is already authenticated, redirect based on role
-    const hasAdminRole = user.roles && user.roles.includes('Admin');
-    return <Navigate to={hasAdminRole ? '/admin/dashboard' : '/dashboard'} replace />;
+    if (user.role === 'Admin') {
+      return <Navigate to="/admin/dashboard" replace />;
+    } else if (user.role === 'Secretary') {
+      return <Navigate to="/secretary" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return children;
@@ -158,6 +189,21 @@ function AppRoutes() {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="ministries" element={<AdminMinistries />} />
+      </Route>
+
+      {/* Secretary Routes */}
+      <Route
+        path="/secretary/*"
+        element={
+          <SecretaryRoute>
+            <SecretaryLayout />
+          </SecretaryRoute>
+        }
+      >
+        <Route index element={<Navigate to="/secretary" replace />} />
+        <Route path="" element={<SecretaryDashboard />} />
+        <Route path="schedule-mass" element={<ScheduleMass />} />
+        <Route path="verify-attendance" element={<VerifyAttendance />} />
       </Route>
 
       {/* Redirect unknown routes to home */}
