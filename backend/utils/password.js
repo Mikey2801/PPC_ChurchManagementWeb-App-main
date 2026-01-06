@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
 // Salt rounds for password hashing (10 is a good balance between security and performance)
 const SALT_ROUNDS = 10;
@@ -14,8 +14,8 @@ export const hashPassword = async (plainPassword) => {
     const hashedPassword = await bcrypt.hash(plainPassword, salt);
     return hashedPassword;
   } catch (error) {
-    console.error('Error hashing password:', error);
-    throw new Error('Failed to hash password');
+    console.error("Error hashing password:", error);
+    throw new Error("Failed to hash password");
   }
 };
 
@@ -30,8 +30,7 @@ export const comparePassword = async (plainPassword, hashedPassword) => {
     const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
     return isMatch;
   } catch (error) {
-    console.error('Error comparing passwords:', error);
-    throw new Error('Failed to compare passwords');
+    console.error("Error comparing passwords:", error);
+    throw new Error("Failed to compare passwords");
   }
 };
-

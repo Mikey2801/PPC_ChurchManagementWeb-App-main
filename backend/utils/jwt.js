@@ -1,11 +1,12 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 dotenv.config();
 
 // JWT secret key from environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h'; // Token expires in 24 hours
+const JWT_SECRET =
+  process.env.JWT_SECRET || "fallback-secret-key-change-in-production";
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "24h"; // Token expires in 24 hours
 
 /**
  * Generate a JWT token for a user
@@ -19,8 +20,8 @@ export const generateToken = (payload) => {
     });
     return token;
   } catch (error) {
-    console.error('Error generating token:', error);
-    throw new Error('Failed to generate token');
+    console.error("Error generating token:", error);
+    throw new Error("Failed to generate token");
   }
 };
 
@@ -35,12 +36,12 @@ export const verifyToken = (token) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      throw new Error('Token has expired');
-    } else if (error.name === 'JsonWebTokenError') {
-      throw new Error('Invalid token');
+    if (error.name === "TokenExpiredError") {
+      throw new Error("Token has expired");
+    } else if (error.name === "JsonWebTokenError") {
+      throw new Error("Invalid token");
     } else {
-      throw new Error('Token verification failed');
+      throw new Error("Token verification failed");
     }
   }
 };
@@ -54,12 +55,11 @@ export const extractTokenFromHeader = (authHeader) => {
   if (!authHeader) {
     return null;
   }
-  
-  const parts = authHeader.split(' ');
-  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
     return null;
   }
-  
+
   return parts[1];
 };
-

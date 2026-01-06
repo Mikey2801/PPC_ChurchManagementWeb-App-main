@@ -274,6 +274,12 @@ export default function ApplicationForMinistry() {
                     disabled={
                       loading || isApplicationPending || isApplicationApproved
                     }
+                    sx={{
+                      color: "#ffffff",
+                      "&.Mui-disabled": {
+                        color: "rgba(255, 255, 255, 0.7)",
+                      },
+                    }}
                   >
                     {loading ? "Submitting..." : "Submit Application"}
                   </Button>
