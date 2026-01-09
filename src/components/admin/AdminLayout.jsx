@@ -23,6 +23,7 @@ import {
   People as PeopleIcon,
   Groups as GroupsIcon,
   Event as EventIcon,
+  Collections as CollectionIcon,
   MonetizationOn as DonationIcon,
   Settings as SettingsIcon,
   Logout as LogoutIcon,
@@ -84,6 +85,7 @@ const menuItems = [
   { text: 'Ministries', icon: <GroupsIcon />, path: '/admin/ministries' },
   { text: 'Events', icon: <EventIcon />, path: '/admin/events' },
   { text: 'Donations', icon: <DonationIcon />, path: '/admin/donations' },
+  { text: 'Collection', icon: <CollectionIcon />, path: '/admin/collections' },
   { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },
 ];
 

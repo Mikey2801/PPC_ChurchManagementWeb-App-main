@@ -31,6 +31,8 @@ import BaptismalScheduling from "./pages/BaptismalScheduling";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminUsers from "./pages/admin/Users.jsx";
 import AdminMinistries from "./pages/admin/Ministries.jsx";
+import AdminDonations from "./pages/admin/donations";
+import AdminCollections from "./pages/admin/collection";
 import SecretaryLayout from "./components/secretary/SecretaryLayout.jsx";
 import SecretaryDashboard from "./pages/secretary/SecretaryDashboard.jsx";
 import ScheduleMass from "./pages/secretary/ScheduleMass.jsx";
@@ -258,6 +260,8 @@ function AppRoutes() {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<AdminUsers />} />
         <Route path="ministries" element={<AdminMinistries />} />
+        <Route path="donations" element={<AdminDonations />} />
+        <Route path="collections" element={<AdminCollections />} />
       </Route>
 
       {/* Secretary Routes */}
